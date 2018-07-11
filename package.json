@@ -13,15 +13,15 @@
   },
   "dependencies": {
     "eol": "^0.9.1",
-    "openpgp": "^3.0.11"
+    "openpgp": "^3.0.12"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "coveralls": "^3.0.1",
-    "eslint": "^4.19.1",
+    "coveralls": "^3.0.2",
+    "eslint": "^5.1.0",
     "eslint-config-standard": "^11.0.0",
     "eslint-plugin-es5": "^1.3.1",
-    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-import": "^2.13.0",
     "eslint-plugin-json": "^1.2.0",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-promise": "^3.7.0",
@@ -37,5 +37,9 @@
   "readme": "README.md",
   "engines": {
     "node": ">=7"
-  }
+  },
+  "homepage": "https://github.com/isysd/tech-js-node_modules-keyring-pgp#readme",
+  "keywords": [
+    "guld"
+  ]
 }
