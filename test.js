@@ -1,4 +1,5 @@
 /* global describe:false it:false before:false */
+global.openpgp = require('openpgp')
 const assert = require('chai').assert
 const pgp = require('./keyring.js')
 const fs = require('fs')

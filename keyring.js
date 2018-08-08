@@ -1,4 +1,5 @@
-const openpgp = require('openpgp')
+/* global openpgp:false */
+
 const eol = require('eol')
 let keyring = new openpgp.Keyring()
 
@@ -66,21 +67,32 @@ async function sign (message, fpr) {
 
 async function verify (message, signature, signers) {
   if (typeof signers === 'string') signers = [signers]
-  let options = {
-    message: openpgp.message.fromText(message),
-    signature: openpgp.signature.readArmored(signature),
-    publicKeys: signers.map(s => {
-      return keyring.publicKeys.getForId(s)
-    })
+  signers = signers.map(s => s.toUpperCase())
+  let options
+  if (signature) {
+    options = {
+      message: openpgp.message.fromText(message),
+      signature: openpgp.signature.readArmored(signature),
+      publicKeys: signers.map(s => {
+        return keyring.publicKeys.getForId(s.toLowerCase())
+      })
+    }
+  } else {
+    options = {
+      message: openpgp.cleartext.readArmored(message),
+      publicKeys: signers.map(s => {
+        return keyring.publicKeys.getForId(s.toLowerCase())
+      })
+    }
   }
   let verified = await openpgp.verify(options)
   verified.signatures.forEach(v => {
     if (!v.valid) return
-    var i = signers.indexOf(v.keyid.toHex())
+    var i = signers.indexOf(v.keyid.toHex().toUpperCase())
     if (i >= 0) {
       signers = signers.splice(i, 1)
     } else {
-      i = signers.indexOf(keyring.publicKeys.getForId(v.keyid.toHex()).primaryKey.getFingerprint())
+      i = signers.indexOf(keyring.publicKeys.getForId(v.keyid.toHex()).primaryKey.getFingerprint().toUpperCase())
       if (i >= 0) {
         signers.splice(i, 1)
       }

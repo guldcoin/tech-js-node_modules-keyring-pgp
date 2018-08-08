@@ -8,12 +8,15 @@
   "license": "MIT",
   "scripts": {
     "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "lint": "eslint --env browser *.js*",
-    "fix": "eslint --fix *.js*"
+    "lint": "eslint --env browser *.js* --ignore-pattern *.min.js",
+    "fix": "eslint --fix *.js* --ignore-pattern *.min.js",
+    "build": "webpack-cli"
   },
   "dependencies": {
     "eol": "^0.9.1",
-    "openpgp": "^3.0.12"
+    "openpgp": "^3.0.12",
+    "webpack": "^4.16.5",
+    "webpack-cli": "^3.1.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
