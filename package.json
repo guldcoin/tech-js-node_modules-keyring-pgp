@@ -7,7 +7,7 @@
   "author": "isysd <public@iramiller.com>",
   "license": "MIT",
   "scripts": {
-    "test": "./node_modules/.bin/istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "./node_modules/mocha/bin/_mocha",
     "lint": "eslint --env browser *.js* --ignore-pattern *.min.js",
     "fix": "eslint --fix *.js* --ignore-pattern *.min.js",
     "build": "webpack-cli"
