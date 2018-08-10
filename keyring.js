@@ -9,7 +9,7 @@ async function generate (options) {
   await this.importPrivateKey(key.privateKeyArmored)
   this.store()
   await this.unlock(options.passphrase)
-  return key
+  return key.getFingerprint()
 }
 
 async function clear () {
@@ -29,6 +29,7 @@ async function listKeys () {
 async function importPublicKey (key) {
   await keyring.publicKeys.importKey(key)
   await this.store()
+  return openpgp.key.readArmored(key).keys[0].primaryKey.getFingerprint()
 }
 
 async function importPrivateKey (key) {
