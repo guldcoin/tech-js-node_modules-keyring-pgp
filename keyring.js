@@ -5,11 +5,9 @@ let keyring = new openpgp.Keyring()
 
 async function generate (options) {
   var key = await openpgp.generateKey(options)
-  await this.importPublicKey(key.publicKeyArmored)
-  await this.importPrivateKey(key.privateKeyArmored)
-  this.store()
-  await this.unlock(options.passphrase)
-  return key.getFingerprint()
+  var fpr = await importPrivateKey(key.privateKeyArmored)
+  await unlockKey(fpr, options.passphrase)
+  return fpr
 }
 
 async function clear () {
@@ -28,13 +26,14 @@ async function listKeys () {
 
 async function importPublicKey (key) {
   await keyring.publicKeys.importKey(key)
-  await this.store()
+  await store()
   return openpgp.key.readArmored(key).keys[0].primaryKey.getFingerprint()
 }
 
 async function importPrivateKey (key) {
   await keyring.privateKeys.importKey(key)
-  await this.store()
+  var fpr = openpgp.key.readArmored(key).keys[0].primaryKey.getFingerprint()
+  return importPublicKey(keyring.privateKeys.getForId(fpr).toPublic().armor())
 }
 
 async function getPublicKey (fpr) {
@@ -50,7 +49,7 @@ async function isLocked (fpr) {
 }
 
 async function unlockKey (fpr, pass) {
-  if (await this.isLocked(fpr)) return keyring.privateKeys.getForId(fpr).decrypt(pass)
+  if (await isLocked(fpr)) return keyring.privateKeys.getForId(fpr).decrypt(pass)
 }
 
 async function lockKey (fpr, pass) {

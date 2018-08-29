@@ -3,7 +3,7 @@
   "main": "./keyring.js",
   "version": "0.4.2",
   "description": "PGP implementation for the keyring-interface.",
-  "repository": "https://github.com/isysd/keyring-pgp",
+  "repository": "https://bitbucket.org/isysd/keyring-pgp",
   "author": "isysd <public@iramiller.com>",
   "license": "MIT",
   "scripts": {
@@ -41,7 +41,7 @@
   "engines": {
     "node": ">=7"
   },
-  "homepage": "https://github.com/isysd/tech-js-node_modules-keyring-pgp#readme",
+  "homepage": "https://bitbucket.org/isysd/tech-js-node_modules-keyring-pgp#readme",
   "keywords": [
     "guld"
   ]
