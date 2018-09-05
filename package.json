@@ -1,7 +1,7 @@
 {
   "name": "keyring-pgp",
   "main": "./index.js",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "PGP implementation for the keyring-interface.",
   "repository": "https://bitbucket.org/guld/tech-js-node_modules-keyring-pgp",
   "author": "isysd <public@iramiller.com>",
