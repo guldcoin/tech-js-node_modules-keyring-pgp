@@ -3,12 +3,14 @@ global.openpgp = require('openpgp')
 const assert = require('chai').assert
 const pgp = require('../')
 const fs = require('fs')
-const pubkey = fs.readFileSync('fixtures/pubkey.asc', 'ascii').trim()
-const privkey = fs.readFileSync('fixtures/privkey.asc', 'ascii').trim()
+const pubkey = fs.readFileSync('./fixtures/pubkey.asc', 'ascii').trim().replace(/Version:.*\n/, '')
+const privkey = fs.readFileSync('./fixtures/privkey.asc', 'ascii').trim().replace(/Version:.*\n/, '')
 const fpr = 'cff501437e131fdb6c2ca2fd2bf7f4af45851864'
 describe('PGPKeyring', function () {
   before(() => {
-    pgp.clear()
+    try {
+      pgp.clear()
+    } catch (e) {}
   })
   //  it('generate', async () => {
   //    this.key = await pgp.generate({
@@ -24,11 +26,11 @@ describe('PGPKeyring', function () {
   //    assert.isTrue(this.key.primaryKey.isDecrypted)
   //  }).timeout(10000)
   it('importPublicKey', async () => {
-    await pgp.importPublicKey(pubkey)
+    await pgp.importPublicKey(pubkey).catch(e => console.error)
   })
   it('getPublicKey', async () => {
     this.pubkey = await pgp.getPublicKey(fpr)
-    assert.equal(this.pubkey, pubkey)
+    assert.equal(this.pubkey.replace(/Version:.*\n/, ''), pubkey)
   })
   it('listKeys', async () => {
     assert((await pgp.listKeys()).length === 1)
@@ -36,7 +38,7 @@ describe('PGPKeyring', function () {
   it('importPrivateKey', async () => {
     await pgp.importPrivateKey(privkey)
     this.privkey = await pgp.getPrivateKey(fpr)
-    assert.equal(this.privkey, privkey)
+    assert.equal(this.privkey.replace(/Version:.*\n/, ''), privkey)
   })
   it('isLocked', async () => {
     var islocked = await pgp.isLocked(fpr)

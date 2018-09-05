@@ -2,8 +2,17 @@
 
 const eol = require('eol')
 let keyring = new openpgp.Keyring()
+let loading = true
+
+async function load () {
+  if (loading) {
+    await keyring.load()
+    loading = false
+  }
+}
 
 async function generate (options) {
+  await load()
   var key = await openpgp.generateKey(options)
   var fpr = await importPrivateKey(key.privateKeyArmored)
   await unlockKey(fpr, options.passphrase)
@@ -11,75 +20,93 @@ async function generate (options) {
 }
 
 async function clear () {
+  await load()
   keyring.clear()
+  await load()
 }
 
 async function store () {
-  keyring.store()
+  await load()
+  await keyring.store()
 }
 
 async function listKeys () {
+  await load()
   return keyring.publicKeys.keys.map(k => {
     return k.primaryKey.getFingerprint()
   })
 }
 
 async function importPublicKey (key) {
+  await load()
   await keyring.publicKeys.importKey(key)
   await store()
-  return openpgp.key.readArmored(key).keys[0].primaryKey.getFingerprint()
+  return (await openpgp.key.readArmored(key)).keys[0].primaryKey.getFingerprint()
 }
 
 async function importPrivateKey (key) {
+  await load()
   await keyring.privateKeys.importKey(key)
-  var fpr = openpgp.key.readArmored(key).keys[0].primaryKey.getFingerprint()
-  return importPublicKey(keyring.privateKeys.getForId(fpr).toPublic().armor())
+  var fpr = (await openpgp.key.readArmored(key)).keys[0].primaryKey.getFingerprint()
+  return await importPublicKey(keyring.privateKeys.getForId(fpr).toPublic().armor())
 }
 
 async function getPublicKey (fpr) {
+  await load()
   return eol.lf(keyring.publicKeys.getForId(fpr).armor()).trim()
 }
 
 async function getPrivateKey (fpr) {
+  await load()
   return eol.lf(keyring.privateKeys.getForId(fpr).armor()).trim()
 }
 
 async function isLocked (fpr) {
-  return !keyring.privateKeys.getForId(fpr).primaryKey.isDecrypted
+  await load()
+  return keyring.privateKeys.getForId(fpr).primaryKey.isEncrypted
 }
 
 async function unlockKey (fpr, pass) {
-  if (await isLocked(fpr)) return keyring.privateKeys.getForId(fpr).decrypt(pass)
+  await keyring.load()
+  if (await isLocked(fpr)) {
+    var resp = await keyring.privateKeys.getForId(fpr).decrypt(pass)
+    return resp
+  }
 }
 
 async function lockKey (fpr, pass) {
+  await load()
   keyring = new openpgp.Keyring()
+  loading = true
+  await load()
 }
 
-async function sign (message, fpr) {
+async function sign (message, fpr, detached=true) {
+  await load()
   var signed = await openpgp.sign({
-    data: message,
+    message: openpgp.message.fromText(message),
     privateKeys: [keyring.privateKeys.getForId(fpr)],
-    detached: true
+    detached: detached
   })
   return signed.signature
 }
 
 async function verify (message, signature, signers) {
+  await load()
   if (typeof signers === 'string') signers = [signers]
   signers = signers.map(s => s.toUpperCase())
   let options
   if (signature) {
     options = {
       message: openpgp.message.fromText(message),
-      signature: openpgp.signature.readArmored(signature),
+      signature: await openpgp.signature.readArmored(signature),
       publicKeys: signers.map(s => {
         return keyring.publicKeys.getForId(s.toLowerCase())
       })
     }
   } else {
     options = {
-      message: openpgp.cleartext.readArmored(message),
+      message: await openpgp.cleartext.readArmored(message),
       publicKeys: signers.map(s => {
         return keyring.publicKeys.getForId(s.toLowerCase())
       })
@@ -102,15 +129,17 @@ async function verify (message, signature, signers) {
 }
 
 async function decrypt (message, fpr) {
+  await load()
   return (await openpgp.decrypt({
-    message: openpgp.message.readArmored(message),
+    message: await openpgp.message.readArmored(message),
     privateKeys: [keyring.privateKeys.getForId(fpr)]
   })).data
 }
 
 async function encrypt (message, fpr) {
+  await load()
   return (await openpgp.encrypt({
-    data: message,
+    message: openpgp.message.fromText(message),
     publicKeys: keyring.publicKeys.getForId(fpr),
     privateKeys: [keyring.privateKeys.getForId(fpr)]
   })).data

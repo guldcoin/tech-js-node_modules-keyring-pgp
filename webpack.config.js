@@ -2,7 +2,7 @@ module.exports = [
   {
     target: 'web',
     entry: {
-      index: './keyring.js'
+      index: './index.js'
     },
     output: {
       filename: 'keyring-pgp.min.js',
