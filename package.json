@@ -1,16 +1,17 @@
 {
   "name": "keyring-pgp",
-  "main": "./keyring.js",
+  "main": "./index.js",
   "version": "0.5.0",
   "description": "PGP implementation for the keyring-interface.",
-  "repository": "https://bitbucket.org/isysd/keyring-pgp",
+  "repository": "https://bitbucket.org/guld/tech-js-node_modules-keyring-pgp",
   "author": "isysd <public@iramiller.com>",
   "license": "MIT",
   "scripts": {
     "test": "./node_modules/mocha/bin/_mocha",
     "lint": "eslint --env browser *.js* --ignore-pattern *.min.js",
     "fix": "eslint --fix *.js* --ignore-pattern *.min.js",
-    "build": "webpack-cli"
+    "build": "webpack-cli",
+    "test:lint": "npm run lint && npm run test"
   },
   "dependencies": {
     "eol": "^0.9.1",
@@ -41,8 +42,9 @@
   "engines": {
     "node": ">=7"
   },
-  "homepage": "https://bitbucket.org/isysd/tech-js-node_modules-keyring-pgp#readme",
+  "homepage": "https://guld.tech/lib/keyring-pgp.html",
   "keywords": [
-    "guld"
+    "guld",
+    "node"
   ]
 }
