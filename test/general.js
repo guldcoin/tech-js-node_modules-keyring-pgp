@@ -70,7 +70,7 @@ describe('PGPKeyring', function () {
     this.sig = await pgp.sign('hello', fpr, 'password')
     assert.exists(this.sig)
     assert.equal(typeof this.sig, 'string')
-  }).timeout(3000)
+  }).timeout(4000)
   it('verify bad signature', async () => {
     var verified = await pgp.verify('hell', this.sig, fpr)
     assert.exists(verified)
@@ -85,7 +85,7 @@ describe('PGPKeyring', function () {
     this.ciphertext = await pgp.encrypt('hello', fpr, 'password')
     assert.exists(this.ciphertext)
     assert.equal(typeof this.ciphertext, 'string')
-  }).timeout(3000)
+  }).timeout(4000)
   it('decrypt', async () => {
     var message = await pgp.decrypt(this.ciphertext, fpr, 'password')
     assert.exists(message)
