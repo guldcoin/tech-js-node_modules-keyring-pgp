@@ -48,7 +48,7 @@ async function importPrivateKey (key) {
   await load()
   await keyring.privateKeys.importKey(key)
   var fpr = (await openpgp.key.readArmored(key)).keys[0].primaryKey.getFingerprint()
-  return await importPublicKey(keyring.privateKeys.getForId(fpr).toPublic().armor())
+  return importPublicKey(keyring.privateKeys.getForId(fpr).toPublic().armor())
 }
 
 async function getPublicKey (fpr) {
@@ -81,7 +81,7 @@ async function lockKey (fpr, pass) {
   await load()
 }
 
-async function sign (message, fpr, detached=true) {
+async function sign (message, fpr, detached = true) {
   await load()
   var signed = await openpgp.sign({
     message: openpgp.message.fromText(message),
